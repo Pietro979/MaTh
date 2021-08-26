@@ -108,8 +108,6 @@ def upload_today_maintable(url, currencies):
     main_table_df = pd.DataFrame(columns = ['date_id', 'rate_id', 'value'])
     main_table_df.index.name = 'index'
 
-
-
     for currency in currencies:
         value_start_index = html.find(currency) + len(currency) + len('</td> <td class="bgt2 right">')
         currency_value = html[value_start_index:(value_start_index + 6)]
@@ -136,10 +134,6 @@ def upload_today_maintable(url, currencies):
     pd.to_numeric(main_table_df['value'])
     print(main_table_df)
     main_table_df.to_sql('maintable', engine, if_exists='append')
-
-
-
-
 
 
 def upload_today_date():
