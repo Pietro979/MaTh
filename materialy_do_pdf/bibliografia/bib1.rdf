@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<rdf:RDF
+      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+      xmlns:bibo="http://purl.org/ontology/biblio/"
+      xmlns:dc="http://purl.org/dc/elements/1.1/"
+      xmlns:dcterms="http://purl.org/dc/terms/"
+      xmlns:foaf="http://xmlns.com/foaf/0.1/"
+>
+
+<bibo:Document rdf:about="">
+
+    <dc:title>Uczenie maszynowe z u&#380;yciem Scikit&#45;Learn i TensorFlow</dc:title>
+    <dc:date>2020</dc:date>
+
+
+
+   <bibo:contribution>
+  <bibo:Contribution>
+    <bibo:role rdf:resource="http://purl.org/ontology/bibo/roles/author" />
+    <bibo:contributor><foaf:Person foaf:name="Aur&#233;lien G&#233;ron"/></bibo:contributor>
+    <bibo:position>1</bibo:position>
+  </bibo:Contribution>
+</bibo:contribution>
+
+
+
+</bibo:Document>
+<bibo:Article rdf:about="https://doi.org/10.1145/3371425.3371448">
+
+    <dc:title>Prediction of exchange rates with machine learning</dc:title>
+    <dc:date>2019</dc:date>
+
+
+    <bibo:doi>10.1145/3371425.3371448</bibo:doi>
+
+
+
+   <bibo:contribution>
+  <bibo:Contribution>
+    <bibo:role rdf:resource="http://purl.org/ontology/bibo/roles/author" />
+    <bibo:contributor><foaf:Person foaf:name="Ahmet Goncu"/></bibo:contributor>
+    <bibo:position>1</bibo:position>
+  </bibo:Contribution>
+</bibo:contribution>
+
+
+
+</bibo:Article>
+<bibo:Article rdf:about="https://doi.org/10.5281/zenodo.4724125">
+
+    <dc:title>TensorFlow</dc:title>
+    <dc:date>2021</dc:date>
+
+
+    <bibo:doi>10.5281/zenodo.4724125</bibo:doi>
+
+
+
+   <bibo:contribution>
+  <bibo:Contribution>
+    <bibo:role rdf:resource="http://purl.org/ontology/bibo/roles/author" />
+    <bibo:contributor><foaf:Person foaf:name="TensorFlow Developers"/></bibo:contributor>
+    <bibo:position>1</bibo:position>
+  </bibo:Contribution>
+</bibo:contribution>
+
+
+
+</bibo:Article>
+<bibo:Article rdf:about="https://doi.org/10.12928/ijio.v1i2.2490">
+
+    <dc:title>Currency movement forecasting using time series analysis and long short&#45;term memory</dc:title>
+    <dc:date>2020</dc:date>
+    <dcterms:isPartOf><bibo:Journal><dc:title>International Journal of Industrial Optimization</dc:title></bibo:Journal></dcterms:isPartOf>
+    <bibo:volume>1</bibo:volume>
+    <bibo:doi>10.12928/ijio.v1i2.2490</bibo:doi>
+
+
+
+   <bibo:contribution>
+  <bibo:Contribution>
+    <bibo:role rdf:resource="http://purl.org/ontology/bibo/roles/author" />
+    <bibo:contributor><foaf:Person foaf:name="Kristina Sanjaya Putri"/></bibo:contributor>
+    <bibo:position>1</bibo:position>
+  </bibo:Contribution>
+</bibo:contribution>
+
+<bibo:contribution>
+  <bibo:Contribution>
+    <bibo:role rdf:resource="http://purl.org/ontology/bibo/roles/author" />
+    <bibo:contributor><foaf:Person foaf:name="Siana Halim"/></bibo:contributor>
+    <bibo:position>2</bibo:position>
+  </bibo:Contribution>
+</bibo:contribution>
+
+
+
+</bibo:Article>
+<bibo:Article rdf:about="">
+
+
+
+
+
+
+
+
+
+
+</bibo:Article>
+</rdf:RDF>

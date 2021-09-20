@@ -80,8 +80,65 @@ class PredictionsApp:
         self.train_mean = prepare_data.train_mean
         self.train_std = prepare_data.train_std
 
+        # if self.method_str_cb.get() == 'Conv Neural Network':
+        #     conv_window = WindowGenerator(
+        #         input_width=CONV_WIDTH,
+        #         label_width=1,
+        #         shift=1, train_df=self.train_df, test_df=self.test_df,
+        #         val_df=self.val_df, df=self.df_std,
+        #         label_columns=['Value'])
+        # elif 'Multistep' in self.method_str_cb.get():
+        #     self.window = WindowGenerator(input_width=OUT_STEPS,
+        #                                    label_width=OUT_STEPS,
+        #                                    shift=OUT_STEPS, train_df=self.train_df, test_df=self.test_df,
+        #                                    val_df=self.val_df, df=self.df_std, train_mean=self.train_mean,
+        #                                    train_std=self.train_std,
+        #                                    single_pred=False)
+        # elif self.method_str_cb.get() == 'Recurrent Neural Network':
+        #     wide_window = WindowGenerator(
+        #         input_width=24,
+        #         label_width=24,
+        #         shift=1, train_df=self.train_df, test_df=self.test_df,
+        #         val_df=self.val_df, df=self.df_std, train_mean=self.train_mean, train_std=self.train_std,
+        #         label_columns=['Value'], single_pred=True)
+        # else:
+        #     single_step_window = WindowGenerator(
+        #         input_width=1, label_width=1, shift=1, single_pred=True, train_df=self.train_df, test_df=self.test_df,
+        #         val_df=self.val_df, df=self.df_std,
+        #         label_columns=['Value'])
+
+        # if self.method_str_cb.get() == 'Baseline':
+        #     self.baseline = Baseline(label_index=self.column_indices['Value'])
+        #     self.baseline.compile(loss=tf.losses.MeanSquaredError(), metrics=[tf.metrics.MeanAbsoluteError()])
+        # elif self.method_str_cb.get() == 'Linear Model':
+        #     self.history = compile_and_fit(linear, single_step_window)
+        # elif self.method_str_cb.get() == 'Dense':
+        #     self.history = compile_and_fit(dense, single_step_window)
+        # elif self.method_str_cb.get() == 'Many Step Dense':
+        #     self.history = compile_and_fit(multi_step_dense, conv_window)
+        # elif self.method_str_cb.get() == 'Conv Neural Network':
+        #     self.history = compile_and_fit(conv_model, conv_window)
+        # elif self.method_str_cb.get() == 'Recurrent Neural Network':
+        #     self.history = compile_and_fit(lstm_model, wide_window)
+        # elif self.method_str_cb.get() == 'Multistep baseline':
+        #     self.last_baseline = MultiStepLastBaseline()
+        #     self.last_baseline.compile(loss=tf.losses.MeanSquaredError(),
+        #                           metrics=[tf.metrics.MeanAbsoluteError()])
+        # elif self.method_str_cb.get() == 'Multistep Repeat baseline':
+        #     self.repeat_baseline = RepeatBaseline()
+        #     self.repeat_baseline.compile(loss=tf.losses.MeanSquaredError(),
+        #                             metrics=[tf.metrics.MeanAbsoluteError()])
+        # elif self.method_str_cb.get() == 'Multistep Linear Model':
+        #     self.history = compile_and_fit(multi_linear_model, self.window)
+        # elif self.method_str_cb.get() == 'Multistep Dense':
+        #     self.history = compile_and_fit(multi_dense_model, self.window)
+        # elif self.method_str_cb.get() == 'Multistep Conv Neural Network':
+        #     self.history = compile_and_fit(multi_conv_model, self.window)
+        # elif self.method_str_cb.get() == 'Multistep Recurrent Neural Network':
+        #     self.history = compile_and_fit(multi_lstm_model, self.window)
+
         if self.method_str_cb.get() == 'Conv Neural Network':
-            conv_window = WindowGenerator(
+            self.window = WindowGenerator(
                 input_width=CONV_WIDTH,
                 label_width=1,
                 shift=1, train_df=self.train_df, test_df=self.test_df,
@@ -95,14 +152,14 @@ class PredictionsApp:
                                            train_std=self.train_std,
                                            single_pred=False)
         elif self.method_str_cb.get() == 'Recurrent Neural Network':
-            wide_window = WindowGenerator(
+            self.window = WindowGenerator(
                 input_width=24,
                 label_width=24,
                 shift=1, train_df=self.train_df, test_df=self.test_df,
                 val_df=self.val_df, df=self.df_std, train_mean=self.train_mean, train_std=self.train_std,
                 label_columns=['Value'], single_pred=True)
         else:
-            single_step_window = WindowGenerator(
+            self.window = WindowGenerator(
                 input_width=1, label_width=1, shift=1, single_pred=True, train_df=self.train_df, test_df=self.test_df,
                 val_df=self.val_df, df=self.df_std,
                 label_columns=['Value'])
@@ -110,16 +167,24 @@ class PredictionsApp:
         if self.method_str_cb.get() == 'Baseline':
             self.baseline = Baseline(label_index=self.column_indices['Value'])
             self.baseline.compile(loss=tf.losses.MeanSquaredError(), metrics=[tf.metrics.MeanAbsoluteError()])
+            # self.val_performance['Baseline'] = self.baseline.evaluate(self.window.val)
+            # self.performance['Baseline'] = self.baseline.evaluate(self.window.test, verbose=0)
         elif self.method_str_cb.get() == 'Linear Model':
-            self.history = compile_and_fit(linear, single_step_window)
+            self.history = compile_and_fit(linear, self.window)
+            # self.val_performance['Linear'] = linear.evaluate(self.single_step_window.val)
+            # self.performance['Linear'] = linear.evaluate(self.single_step_window.test, verbose=0)
         elif self.method_str_cb.get() == 'Dense':
-            self.history = compile_and_fit(dense, single_step_window)
+            self.history = compile_and_fit(dense, self.window)
+            # self.val_performance['Dense'] = dense.evaluate(self.single_step_window.val)
+            # self.performance['Dense'] = dense.evaluate(self.single_step_window.test, verbose=0)
         elif self.method_str_cb.get() == 'Many Step Dense':
-            self.history = compile_and_fit(multi_step_dense, conv_window)
+            self.history = compile_and_fit(multi_step_dense, self.window)
         elif self.method_str_cb.get() == 'Conv Neural Network':
-            self.history = compile_and_fit(conv_model, conv_window)
+            self.history = compile_and_fit(conv_model, self.window)
+            # self.val_performance['Conv'] = conv_model.evaluate(self.conv_window.val)
+            # self.performance['Conv'] = conv_model.evaluate(self.conv_window.test, verbose=0)
         elif self.method_str_cb.get() == 'Recurrent Neural Network':
-            self.history = compile_and_fit(lstm_model, wide_window)
+            self.history = compile_and_fit(lstm_model, self.window)
         elif self.method_str_cb.get() == 'Multistep baseline':
             self.last_baseline = MultiStepLastBaseline()
             self.last_baseline.compile(loss=tf.losses.MeanSquaredError(),
@@ -136,13 +201,6 @@ class PredictionsApp:
             self.history = compile_and_fit(multi_conv_model, self.window)
         elif self.method_str_cb.get() == 'Multistep Recurrent Neural Network':
             self.history = compile_and_fit(multi_lstm_model, self.window)
-
-        #
-        # wide_window = WindowGenerator(
-        #     input_width=24, label_width=24, shift=1, train_df=train_df, test_df_in=test_df,
-        #     val_df=val_df,
-        #     label_columns=['Value'], single_pred=True)
-        # wide_window.plot(linear, last=False)
 
 
         # val_performance = {}
@@ -161,29 +219,29 @@ class PredictionsApp:
         data_to_predict_np = data_to_predict_np[:, np.newaxis]
 
 
-        # wide_window
+
         if self.method_str_cb.get() in ['Baseline', 'Linear Model','Dense', 'Many Step Dense','Recurrent Neural Network']:
-            wide_window = WindowGenerator(
+            self.window = WindowGenerator(
                 input_width=int(self.how_many_days_entry.get()) - 1, label_width=int(self.how_many_days_entry.get()) - 1,
                 shift=1, train_df=self.train_df, test_df=self.test_df,
                 val_df=self.val_df, df=self.df_std, train_mean=self.train_mean, train_std = self.train_std,
                 label_columns=['Value'], single_pred=True)
 
-            example_inputs, example_labels = wide_window.split_window(tf.stack([data_to_predict_np]),
+            example_inputs, example_labels = self.window.split_window(tf.stack([data_to_predict_np]),
                                                                       real_values = data_to_present_np)
-            wide_window._example = example_inputs, example_labels
+            self.window._example = example_inputs, example_labels
 
         if self.method_str_cb.get() == 'Conv Neural Network':
-            wide_conv_window = WindowGenerator(
+            self.window = WindowGenerator(
                 input_width=int(self.how_many_days_entry.get()) -1,
                 label_width=int(self.how_many_days_entry.get()) - CONV_WIDTH,
                 shift=1, train_df=self.train_df, test_df=self.test_df,
                 val_df=self.val_df, df=self.df_std, train_mean=self.train_mean, train_std = self.train_std,
                 label_columns=['Value'], single_pred=True)
 
-            example_inputs, example_labels = wide_conv_window.split_window(tf.stack([data_to_predict_np]),
+            example_inputs, example_labels = self.window.split_window(tf.stack([data_to_predict_np]),
                                                                       real_values=data_to_present_np)
-            wide_conv_window._example = example_inputs, example_labels
+            self.window._example = example_inputs, example_labels
 
         if 'Multistep' in self.method_str_cb.get():
             self.window = WindowGenerator(input_width=OUT_STEPS,
@@ -197,17 +255,17 @@ class PredictionsApp:
             self.window._example = example_inputs, example_labels
 
         if self.method_str_cb.get() == 'Baseline':
-            wide_window.plot(self.baseline, last=False)
+            self.window.plot(self.baseline, last=False)
         elif self.method_str_cb.get() == 'Linear Model':
-            wide_window.plot(linear, last=False)
+            self.window.plot(linear, last=False)
         elif self.method_str_cb.get() == 'Dense':
-            wide_window.plot(dense, last=False)
+            self.window.plot(dense, last=False)
         elif self.method_str_cb.get() == 'Many Step Dense':
-            self.conv_window.plot(multi_step_dense, last=False)
+            self.window.plot(multi_step_dense, last=False)
         elif self.method_str_cb.get() == 'Conv Neural Network':
-            wide_conv_window.plot(conv_model, last=False)
+            self.window.plot(conv_model, last=False)
         elif self.method_str_cb.get() == 'Recurrent Neural Network':
-            wide_window.plot(lstm_model, last=False)
+            self.window.plot(lstm_model, last=False)
         elif self.method_str_cb.get() == 'Multistep baseline':
             self.window.plot(self.last_baseline, last=False)
         elif self.method_str_cb.get() == 'Multistep Repeat baseline':
@@ -220,6 +278,13 @@ class PredictionsApp:
             self.window.plot(multi_conv_model, last=False)
         elif self.method_str_cb.get() == 'Multistep Recurrent Neural Network':
             self.window.plot(multi_lstm_model, last=False)
+
+    def print_results(self):
+        real_values_np = self.window.real_values
+        prediction_values_np = self.window.predictions.numpy()[0,:,0]
+        print('Dates: ',real_values_np[:,0])
+        print('Real Values: ', real_values_np[:,1])
+        print('Predicted values (',self.method_str_cb.get(),'): ', prediction_values_np)
 
     def __init__(self):
         year_tab = [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]
@@ -239,18 +304,18 @@ class PredictionsApp:
 
         self.root = Tk()
         self.root.title("PredictionApp")
-        self.root.geometry("800x500")
+        self.root.geometry("600x400")
         self.root.resizable(True,True)
-        self.options_width = 0.25
+        self.options_width = 1 # 0.25
         self.options_height = 0.2
-        self.chart_width = 0.75
+        self.chart_width = 0 # 0.75
 
         notebook = ttk.Notebook(self.root)
         notebook.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)
         f1 = ttk.Frame(notebook)   # first page, which would get widgets gridded into it
-        f2 = ttk.Frame(notebook)   # second page
-        notebook.add(f1, text='Single Step')
-        notebook.add(f2, text='Multiple Steps')
+        # f2 = ttk.Frame(notebook)   # second page
+        notebook.add(f1, text='Predictions')
+        # notebook.add(f2, text='Multiple Steps')
 
         self.chart_frame = ttk.LabelFrame(f1, text = "chart_frame")
         self.dates_frame = ttk.LabelFrame(f1, text = "dates_frame")
@@ -260,9 +325,9 @@ class PredictionsApp:
         self.result_frame = ttk.LabelFrame(f1, text="result_frame")
 
         self.chart_frame.place(relx = 0, rely = 0, relheight = 1, relwidth = self.chart_width)
-        self.method_frame.place(relx=self.chart_width, rely=self.options_height*0, relheight=self.options_height, relwidth=self.options_width)
-        self.rates_frame.place(relx=self.chart_width, rely=self.options_height*1, relheight=self.options_height, relwidth=self.options_width)
-        self.dates_frame.place(relx=self.chart_width, rely=self.options_height*2, relheight=self.options_height, relwidth=self.options_width)
+        self.method_frame.place(relx=self.chart_width, rely=self.options_height*0, relheight=self.options_height*0.6, relwidth=self.options_width)
+        self.rates_frame.place(relx=self.chart_width, rely=self.options_height*0.6, relheight=self.options_height, relwidth=self.options_width)
+        self.dates_frame.place(relx=self.chart_width, rely=self.options_height*1.6, relheight=self.options_height*1.4, relwidth=self.options_width)
         self.predict_button_frame.place(relx=self.chart_width, rely=self.options_height*3, relheight=self.options_height, relwidth=self.options_width)
         self.result_frame.place(relx=self.chart_width, rely=self.options_height*4, relheight=self.options_height, relwidth=self.options_width)
 
@@ -272,29 +337,32 @@ class PredictionsApp:
         self.predict_button = ttk.Button(self.predict_button_frame, text = "Predict", command = self.predict_data)
         self.predict_button.place(relx = 0.5, rely = 0.5, anchor = CENTER, relheight = 0.9, relwidth = 0.9)
 
+        self.print_button = ttk.Button(self.result_frame, text="Print results", command=self.print_results)
+        self.print_button.place(relx=0.5, rely=0.5, anchor=CENTER, relheight=0.9, relwidth=0.9)
+
         # DATES FROM
 
         self.date_from_year = ttk.Combobox(self.dates_frame, values = year_tab)
-        self.date_from_year.place(relx=0.2, rely=0, relheight=0.3, relwidth=0.3)
+        self.date_from_year.place(relx=0.19, rely=0, relheight=0.3, relwidth=0.3)
 
         self.date_from_month = ttk.Combobox(self.dates_frame, values=month_tab)
-        self.date_from_month.place(relx=0.51, rely=0, relheight=0.3, relwidth=0.24)
+        self.date_from_month.place(relx=0.50, rely=0, relheight=0.3, relwidth=0.24)
 
         self.date_from_day = ttk.Combobox(self.dates_frame, values=day_tab)
-        self.date_from_day.place(relx=0.76, rely=0, relheight=0.3, relwidth=0.24)
+        self.date_from_day.place(relx=0.75, rely=0, relheight=0.3, relwidth=0.20)
 
         self.label_from = ttk.Label(self.dates_frame, text = "from: ")
-        self.label_from.place(relx=0.01, rely=0, relheight=0.3, relwidth=0.18)
+        self.label_from.place(relx=0.05, rely=0, relheight=0.3, relwidth=0.1)
 
         self.label_to = ttk.Label(self.dates_frame, text="for: ")
-        self.label_to.place(relx=0.01, rely=0.31, relheight=0.3, relwidth=0.18)
+        self.label_to.place(relx=0.05, rely=0.31, relheight=0.3, relwidth=0.1)
 
         self.label_to_2 = ttk.Label(self.dates_frame, text="days")
-        self.label_to_2.place(relx=0.8, rely=0.31, relheight=0.3, relwidth=0.18)
+        self.label_to_2.place(relx=0.5, rely=0.31, relheight=0.3, relwidth=0.2)
 
         how_many_days_str = StringVar()
         self.how_many_days_entry = ttk.Entry(self.dates_frame, textvariable = how_many_days_str)
-        self.how_many_days_entry.place(relx=0.4, rely=0.31, relheight=0.3, relwidth=0.4)
+        self.how_many_days_entry.place(relx=0.19, rely=0.31, relheight=0.3, relwidth=0.3)
 
         self.ax1 = None
         self.rate = None
@@ -339,7 +407,7 @@ class PredictionsApp:
 
         self.method_str = StringVar()
         self.method_str_cb = ttk.Combobox(self.method_frame, textvariable=self.method_str, values = methods_tab)
-        self.method_str_cb.place(relx=0.5, rely=0.25, anchor=CENTER, relheight=0.4, relwidth=0.9)
+        self.method_str_cb.place(relx=0.5, rely=0.25, anchor=CENTER, relheight=0.9, relwidth=0.9)
 
 
         ###########################################################################################################################################3

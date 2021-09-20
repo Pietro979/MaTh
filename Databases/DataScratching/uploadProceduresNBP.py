@@ -83,7 +83,7 @@ def rate_upload_record_from_dict(d: dict):
     rate.to_sql('rates', engine, if_exists='append')
 
 
-def get_max_id_from_database_table(table_name: str, table_id_name: int) -> int:
+def get_max_id_from_database_table(table_name: str, table_id_name: str) -> int:
     # try:
     engine = engine_create()
     # except Exception as e:
@@ -112,7 +112,8 @@ def upload_today_maintable(url, currencies):
         value_start_index = html.find(currency) + len(currency) + len('</td> <td class="bgt2 right">')
         currency_value = html[value_start_index:(value_start_index + 6)]
         today_date = date.today().strftime("%d.%m.%Y")
-        main_table_df = main_table_df.append({'date_id': today_date, 'rate_id': currency[2:5]+'/PLN', 'value': currency_value}, ignore_index=True)
+        main_table_df = main_table_df.append({'date_id': today_date, 'rate_id': currency[2:5]+'/PLN',
+                                              'value': currency_value}, ignore_index=True)
 
     max_id = get_max_id_from_database_table('maintable', 'index')
     if max_id > 0:
@@ -124,11 +125,13 @@ def upload_today_maintable(url, currencies):
 
     engine = engine_create()
     dates_df = pd.read_sql_table(table_name='dates', con=engine, index_col='date_id')
-    main_table_df['date_id'] = main_table_df['date_id'].map(lambda x: dates_df[dates_df['date'] == x].index.values.astype(int)[0])
+    main_table_df['date_id'] = main_table_df['date_id'].map(lambda x: dates_df[dates_df['date'] == x]
+                                                            .index.values.astype(int)[0])
 
     rates_df = pd.read_sql_table(table_name='rates', con=engine, index_col='rate_id')
     rates_df = rates_df[rates_df['bank_name'] == 'NBP']
-    main_table_df['rate_id'] = main_table_df['rate_id'].map(lambda x: rates_df[rates_df['rate'] == x].index.values.astype(int)[0])
+    main_table_df['rate_id'] = main_table_df['rate_id'].map(lambda x: rates_df[rates_df['rate'] == x]
+                                                            .index.values.astype(int)[0])
 
     main_table_df['value'] = main_table_df['value'].str.replace(',', '.')
     pd.to_numeric(main_table_df['value'])

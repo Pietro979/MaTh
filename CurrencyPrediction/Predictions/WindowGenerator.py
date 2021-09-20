@@ -93,12 +93,14 @@ def plot(self, model=None, plot_col='Value', max_subplots=3, last=True, future=T
     plt.figure(figsize=(12, 8))
     plot_col_index = self.column_indices[plot_col]
     max_n = min(max_subplots, len(inputs))
+    last = True
     for n in range(max_n):
         plt.subplot(max_n, 1, n + 1)
-        plt.ylabel(f'{plot_col} [normed]')
+
         # plt.plot(self.input_indices, inputs[n, :, plot_col_index],
         #          label='Inputs', marker='.', zorder=-10)
-        plt.plot(self.real_values[:-1, 0], self.real_values[:-1, 1])
+        # plt.plot(self.real_values[:-1, 0], self.real_values[:-1, 1], color = 'green')
+        plt.plot(self.real_values[:, 0], self.real_values[:, 1], color='green')
 
         if self.label_columns:
             label_col_index = self.label_columns_indices.get(plot_col, None)
@@ -108,28 +110,35 @@ def plot(self, model=None, plot_col='Value', max_subplots=3, last=True, future=T
         if label_col_index is None:
             continue
         # małe oszustwo
+
         if last == False:
             # plt.scatter(self.label_indices[:-self.shift], labels[n, :-self.shift, label_col_index],  # bez ostatniego
             #             edgecolors='k', label='Labels', c='#2ca02c', s=64)
             plt.scatter(self.real_values[:-1, 0], self.real_values[:-1, 1],  # bez ostatniego
-                        edgecolors='k', label='Labels', c='#2ca02c', s=64)
+                        edgecolors='k', label='Real values', c='green', s=64)
         else:
             # plt.scatter(self.label_indices[:], labels[n, :, label_col_index],  # z ostatnim
             #             edgecolors='k', label='Labels', c='#2ca02c', s=64)
             plt.scatter(self.real_values[:, 0], self.real_values[:, 1],  # bez ostatniego
-                        edgecolors='k', label='Labels', c='#2ca02c', s=64)
+                        edgecolors='k', label='Real values', c='green', s=64)
+            ax = plt.gca()
+            temp = ax.xaxis.get_ticklabels()
+            temp = list(set(temp) - set(temp[::3]))
+            for label in temp:
+                label.set_visible(False)
 
         if model is not None:
             predictions = model(inputs)
             predictions = (predictions * self.train_std) + self.train_mean
+            self.predictions = predictions
             plt.scatter(self.label_indices, predictions[n, :, label_col_index],
                         marker='X', edgecolors='k', label='Predictions',
-                        c='#ff7f0e', s=64)
+                        c='red', s=64)
 
         if n == 0:
             plt.legend()
-
-    plt.xlabel('Time [h]')
+    plt.ylabel(f'{plot_col}')
+    plt.xlabel('Date')
     plt.show()
 
 
